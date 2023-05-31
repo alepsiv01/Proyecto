@@ -9,7 +9,4 @@ public interface DAO {
     public abstract boolean delete (String id)throws SQLException;
     public abstract ArrayList obtenerTodo( ) throws SQLException;
     public abstract Object buscarporID (String id)throws SQLException;
-
-
-
 }

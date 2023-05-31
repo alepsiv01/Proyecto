@@ -4,7 +4,7 @@ import org.example.Persistencia.CampeonesDAO;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ModTa implements TableModel {
@@ -18,9 +18,8 @@ public class ModTa implements TableModel {
     }
 
     public ModTa(ArrayList<Campeones> datos) {
-        this.datos = datos;
         campeonesDAO = new CampeonesDAO();
-
+        this.datos = datos;
     }
 
     @Override
@@ -127,6 +126,7 @@ public class ModTa implements TableModel {
     @Override
     public void addTableModelListener(TableModelListener l) {
 
+
     }
 
     @Override
@@ -140,8 +140,38 @@ public class ModTa implements TableModel {
             datos = campeonesDAO.obtenerTodo();
         }catch (SQLException sqle){
             System.out.println(sqle.getMessage());
-
         }
+    }
 
+    public boolean agregar(Campeones campeones){
+        boolean resultado = false;
+        try{
+            if(campeonesDAO.insertar(campeones)){
+                datos.add(campeones);
+                resultado = true;
+            }else{
+                resultado = false;
+            }
+        }catch(SQLException sqle){
+            System.out.println(sqle.getMessage());
+        }
+        return resultado;
+    }
+    public Campeones getCampeonIndex(int idx){
+        return datos.get(idx);
+    }
+    public boolean actualizar(Campeones camp) {
+        boolean resultado = false;
+        try {
+            if (campeonesDAO.update(camp)) {
+                datos.add(camp);
+                resultado = true;
+            } else {
+                resultado = false;
+            }
+        } catch (SQLException sqle) {
+            System.out.println("Error" + sqle.getMessage());
+        }
+        return resultado;
     }
 }

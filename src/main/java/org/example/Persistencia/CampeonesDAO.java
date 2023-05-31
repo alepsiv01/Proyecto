@@ -2,10 +2,7 @@ package org.example.Persistencia;
 
 import org.example.Modelo.Campeones;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class CampeonesDAO implements DAO{
@@ -51,20 +48,32 @@ public class CampeonesDAO implements DAO{
         rowCount = pstm.executeUpdate();
         return rowCount > 0;
     }
-
     @Override
-    public ArrayList obtenerTodo() throws SQLException {
+    public ArrayList<Campeones> obtenerTodo() throws SQLException {
         String sql = "SELECT * FROM Campeones";
         ArrayList<Campeones> resultado = new ArrayList<>();
+        String dbPath = "C:\\Users\\Efrain\\IdeaProjects\\Proyecto\\LOLDB.db";
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
 
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
 
-        Statement stm = ConexionSQL.getInstance("LOLDB.db").getConnection().prepareStatement(sql);
-        ResultSet rst = stm.executeQuery(sql);
-        while (rst.next()){
-            resultado.add(new Campeones(rst.getInt(1), rst.getString(2),
-                    rst.getString(3),rst.getString(4),
-                    rst.getString(5),rst.getString(6)));
+            while (resultSet.next()) {
+                resultado.add(new Campeones(resultSet.getInt(1), resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getString(4),
+                        resultSet.getString(5), resultSet.getString(6)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
         return resultado;
     }
 
